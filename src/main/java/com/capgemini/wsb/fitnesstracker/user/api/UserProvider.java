@@ -16,12 +16,19 @@ public interface UserProvider {
 
     /**
      * Retrieves a user based on their email.
-     * If the user with given email is not found, then {@link Optional#empty()} will be returned.
      *
-     * @param email The email of the user to be searched
-     * @return An {@link Optional} containing the located user, or {@link Optional#empty()} if not found
+     * @param email The email to be filtered by
+     * @return An {@link List} containing the found users
      */
-    Optional<User> getUserByEmail(String email);
+    List<User> getUsersByEmail(String email);
+
+    /**
+     * Retrieves a users based on their age being greater than provided.
+     *
+     * @param ageGtThan The email to be filtered by
+     * @return An {@link List} containing the found users
+     */
+    List<User> getUsersByAgeGreaterThan(Integer ageGtThan);
 
     /**
      * Retrieves all users.

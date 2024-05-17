@@ -6,6 +6,7 @@ import com.capgemini.wsb.fitnesstracker.user.api.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,8 +33,13 @@ class UserServiceImpl implements UserService, UserProvider {
     }
 
     @Override
-    public Optional<User> getUserByEmail(final String email) {
+    public List<User> getUsersByEmail(final String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<User> getUsersByAgeGreaterThan(Integer ageGtThan) {
+        return userRepository.findByAgeGreaterThan(ageGtThan);
     }
 
     @Override
@@ -41,4 +47,13 @@ class UserServiceImpl implements UserService, UserProvider {
         return userRepository.findAll();
     }
 
+    @Override
+    public Optional<User> updateUserFirstName(Long id, String firstName) {
+        return userRepository.updateUserFirstName(id, firstName);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 }
