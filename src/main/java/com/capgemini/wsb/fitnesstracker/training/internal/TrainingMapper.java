@@ -52,8 +52,6 @@ class TrainingMapper {
     Training toEntity(Long trainingId, UpdateTrainingDto trainingDto) throws UserNotFoundException {
         Training originalTraining = this.trainingServiceImpl.getTraining(trainingId).orElseThrow(() -> new TrainingNotFoundException(trainingId));
 
-
-
         return new Training(
                 originalTraining.getUser(),
                 trainingDto.getStartTime(),
