@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,15 @@ public class UserServiceImpl implements UserService, UserProvider {
     }
 
     @Override
+    public Optional<User> updateUser(final Long id, final User user) {
+        log.info("Updating User {}", user);
+        if (user.getId() != null) {
+            throw new IllegalArgumentException("User has already DB ID, update is not permitted!");
+        }
+        return userRepository.updateUser(id, user);
+    }
+
+    @Override
     public Optional<User> getUser(final Long userId) {
         return userRepository.findById(userId);
     }
@@ -37,18 +47,13 @@ public class UserServiceImpl implements UserService, UserProvider {
     }
 
     @Override
-    public List<User> getUsersByAgeGreaterThan(Integer ageGtThan) {
-        return userRepository.findByAgeGreaterThan(ageGtThan);
+    public List<User> getUsersBornAfter(LocalDate after) {
+        return userRepository.findBornAfter(after);
     }
 
     @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public Optional<User> updateUserFirstName(Long id, String firstName) {
-        return userRepository.updateUserFirstName(id, firstName);
     }
 
     @Override

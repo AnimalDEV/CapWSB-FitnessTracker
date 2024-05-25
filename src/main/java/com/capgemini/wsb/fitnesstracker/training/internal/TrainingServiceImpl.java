@@ -19,7 +19,7 @@ public class TrainingServiceImpl implements TrainingProvider, TrainingService {
     private final TrainingRepository trainingRepository;
 
     @Override
-    public Optional<Training> getTraining(final Long trainingId) {
+    public Optional<Training> getTraining(Long trainingId) {
         return this.trainingRepository.findById(trainingId);
     }
 
@@ -52,7 +52,14 @@ public class TrainingServiceImpl implements TrainingProvider, TrainingService {
     }
 
     @Override
-    public Optional<Training> updateTrainingDistance(Long trainingId, Double distance) {
-        return trainingRepository.updateTrainingDistance(trainingId, distance);
+    public Optional<Training> updateTraining(final Long id, final Training training) {
+        log.info("Updating Training {}", training);
+        if (training.getId() != null) {
+            throw new IllegalArgumentException("Training has already DB ID, update is not permitted!");
+        }
+
+        training.setId(null);
+
+        return trainingRepository.updateTraining(id, training);
     }
 }

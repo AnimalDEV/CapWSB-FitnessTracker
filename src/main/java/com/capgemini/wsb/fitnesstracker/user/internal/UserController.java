@@ -3,8 +3,11 @@ package com.capgemini.wsb.fitnesstracker.user.internal;
 import com.capgemini.wsb.fitnesstracker.user.api.User;
 import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,30 +21,38 @@ class UserController {
     private final UserMapper userMapper;
 
     @GetMapping
-    public List<BasicUserInfoDto> getAllUsers() {
+    public List<UserDto> getAllUsers() {
+        return userService.findAllUsers()
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    @GetMapping("/simple")
+    public List<BasicUserInfoDto> getAllSimpleUsers() {
         return userService.findAllUsers()
                 .stream()
                 .map(userMapper::toBasicUserInfoDto)
                 .toList();
     }
 
-    @GetMapping("/filter-by-email")
+    @GetMapping("/email")
     public List<UserEmailInfoDto> filterUsersByEmail(
             @RequestParam() String email
     ) {
-        return  userService.getUsersByEmail(email)
+        return userService.getUsersByEmail(email)
                 .stream()
                 .map(userMapper::toUserEmailInfoDto)
                 .toList();
     }
 
-    @GetMapping("/filter-by-age")
-    public List<BasicUserInfoDto> filterUsersByAge(
-            @RequestParam() Integer ageGtThan
-    ) {
-        return userService.getUsersByAgeGreaterThan(ageGtThan)
+    @GetMapping("/older/{time}")
+    public List<UserDto> getUsersBornAfter(
+            @PathVariable() @DateTimeFormat(pattern="yyyy-MM-dd HH:mm") LocalDate time
+            ) {
+        return userService.getUsersBornAfter(time)
                 .stream()
-                .map(userMapper::toBasicUserInfoDto)
+                .map(userMapper::toDto)
                 .toList();
     }
 
@@ -53,6 +64,7 @@ class UserController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@RequestBody UserDto userDto) {
         final User mappedUser = this.userMapper.toEntity(userDto);
         final User createdUser = this.userService.createUser(mappedUser);
@@ -60,13 +72,16 @@ class UserController {
         return this.userMapper.toDto(createdUser);
     }
 
-    @PostMapping( "/{userId}/set-first-name")
-    public UserDto updateUserFirstName(@PathVariable Long userId, @RequestBody String firstName) {
-        Optional<User> updatedUser = this.userService.updateUserFirstName(userId, firstName);
-        return updatedUser.map(this.userMapper::toDto).orElseThrow(() -> new UserNotFoundException(userId));
+    @PutMapping("/{userId}")
+    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
+        final User mappedUser = this.userMapper.toEntity(userDto);
+        final Optional<User> createdUser = this.userService.updateUser(userId, mappedUser);
+
+        return this.userMapper.toDto(createdUser.orElseThrow(() -> new UserNotFoundException(userId)));
     }
 
     @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
         this.userService.deleteUser(userId);
     }

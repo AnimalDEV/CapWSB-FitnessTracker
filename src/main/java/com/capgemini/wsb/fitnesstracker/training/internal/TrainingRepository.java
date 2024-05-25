@@ -16,7 +16,7 @@ interface TrainingRepository extends JpaRepository<Training, Long> {
      */
     default List<Training> findByUser(Long userId) {
         return findAll().stream()
-                .filter(user -> user.getId().longValue() == userId).toList();
+                .filter(training -> training.getUser().getId().longValue() == userId).toList();
     }
 
     /**
@@ -42,21 +42,25 @@ interface TrainingRepository extends JpaRepository<Training, Long> {
     }
 
     /**
-     * Update training distance by id.
+     * Update training.
      *
      * @param id id of the training to update
-     * @param distance value to set
+     * @param training {@link Training} value to set
      * @return {@link Optional} containing updated training or {@link Optional#empty()} if training was not found
      */
-    default Optional<Training> updateTrainingDistance(Long id, Double distance) {
-        Optional<Training> training = findById(id);
+    default Optional<Training> updateTraining(Long id, Training training) {
+        Optional<Training> trainingFromDb = findById(id);
 
-        if(training.isEmpty()) {
-            return training;
+        if(trainingFromDb.isEmpty()) {
+            return trainingFromDb;
         }
 
-        training.get().setDistance(distance);
+        trainingFromDb.get().setDistance(training.getDistance());
+        trainingFromDb.get().setAverageSpeed(training.getAverageSpeed());
+        trainingFromDb.get().setStartTime(training.getStartTime());
+        trainingFromDb.get().setEndTime(training.getEndTime());
+        trainingFromDb.get().setActivityType(training.getActivityType());
 
-        return Optional.of(this.saveAndFlush(training.get()));
+        return Optional.of(this.saveAndFlush(trainingFromDb.get()));
     }
 }

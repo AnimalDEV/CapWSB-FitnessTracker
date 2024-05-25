@@ -4,6 +4,7 @@ import com.capgemini.wsb.fitnesstracker.training.api.Training;
 import com.capgemini.wsb.fitnesstracker.training.api.TrainingNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -20,37 +21,45 @@ class TrainingController {
     private final TrainingMapper trainingMapper;
 
     @GetMapping
-    public List<TrainingDto> getAllTrainings(
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd HH:mm") Date endedAfter,
-            @RequestParam(required = false) ActivityType activity
-    ) {
-        List<Training> trainings;
-
-        if(userId != null) {
-            trainings = trainingService.findAllUserTrainings(userId);
-        } else if(endedAfter != null) {
-            trainings = trainingService.findAllTrainingsEndedAfter(endedAfter);
-        } else if(activity != null) {
-            trainings = trainingService.findAllTrainingsOfType(activity);
-        } else {
-            trainings = trainingService.findAllTrainings();
-        }
-
-        return trainings
+    public List<TrainingDto> getAllTrainings() {
+        return trainingService.findAllTrainings()
                 .stream()
                 .map(trainingMapper::toDto)
                 .toList();
     }
 
-    @GetMapping( "/{trainingId}")
-    public TrainingDto getTraining(@PathVariable Long trainingId) {
-        Optional<Training> training = trainingService.getTraining(trainingId);
+    @GetMapping("/activityType")
+    public List<TrainingDto> getAllTrainingsByActivityType(
+            @RequestParam() ActivityType activityType
+    ) {
+        return trainingService.findAllTrainingsOfType(activityType)
+                .stream()
+                .map(trainingMapper::toDto)
+                .toList();
+    }
 
-        return training.map(this.trainingMapper::toDto).orElseThrow(() -> new TrainingNotFoundException(trainingId));
+    @GetMapping("/finished/{afterTime}")
+    public List<TrainingDto> getAllTrainingsFinishedAfter(
+            @PathVariable @DateTimeFormat(pattern="yyyy-MM-dd") Date afterTime
+    ) {
+        return trainingService.findAllTrainingsEndedAfter(afterTime)
+                .stream()
+                .map(trainingMapper::toDto)
+                .toList();
+    }
+
+    @GetMapping("/{userId}")
+    public List<TrainingDto> getAllUserTrainings(
+            @PathVariable Long userId
+    ) {
+        return trainingService.findAllUserTrainings(userId)
+                .stream()
+                .map(trainingMapper::toDto)
+                .toList();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TrainingDto addTraining(@RequestBody TrainingDto trainingDto) {
         final Training mappedTraining = this.trainingMapper.toEntity(trainingDto);
         final Training createdTraining = this.trainingService.createTraining(mappedTraining);
@@ -58,9 +67,11 @@ class TrainingController {
         return this.trainingMapper.toDto(createdTraining);
     }
 
-    @PostMapping( "/{trainingId}/set-distance")
-    public TrainingDto updateTrainingDistance(@PathVariable Long trainingId, @RequestBody Double distance) {
-        Optional<Training> updatedTraining = this.trainingService.updateTrainingDistance(trainingId, distance);
+    @PutMapping( "/{trainingId}")
+    public TrainingDto updateTraining(@PathVariable Long trainingId, @RequestBody UpdateTrainingDto trainingDto) {
+        final Training mappedTraining = this.trainingMapper.toEntity(trainingId, trainingDto);
+        final Optional<Training> updatedTraining = this.trainingService.updateTraining(trainingId, mappedTraining);
+
         return updatedTraining.map(this.trainingMapper::toDto).orElseThrow(() -> new TrainingNotFoundException(trainingId));
     }
 

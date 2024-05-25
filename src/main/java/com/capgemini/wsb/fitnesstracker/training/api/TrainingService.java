@@ -10,5 +10,5 @@ public interface TrainingService {
 
     Training createTraining(Training training);
 
-    Optional<Training> updateTrainingDistance(Long trainingId, Double distance);
+    Optional<Training> updateTraining(Long id, Training training);
 }

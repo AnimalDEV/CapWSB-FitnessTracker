@@ -9,17 +9,14 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class TrainingDto {
-    private Long Id;
-    private TrainingUserDto user;
-    private Long userId;
+public class UpdateTrainingDto {
     private Date startTime;
     private Date endTime;
     private ActivityType activityType;
     private Double distance;
     private Double averageSpeed;
 
-    public TrainingDto(
+    public UpdateTrainingDto(
             @Nullable Long Id,
             @Nullable TrainingUserDto user,
             @Nullable Long userId,
@@ -29,9 +26,6 @@ public class TrainingDto {
             @Nullable Double distance,
             @Nullable Double averageSpeed
     ) {
-        this.Id = Id;
-        this.user = user;
-        this.userId = userId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.activityType = activityType;

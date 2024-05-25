@@ -1,5 +1,6 @@
 package com.capgemini.wsb.fitnesstracker.user.api;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +26,10 @@ public interface UserProvider {
     /**
      * Retrieves a users based on their age being greater than provided.
      *
-     * @param ageGtThan The email to be filtered by
+     * @param after {@link LocalDate} date to compare
      * @return An {@link List} containing the found users
      */
-    List<User> getUsersByAgeGreaterThan(Integer ageGtThan);
+    List<User> getUsersBornAfter(LocalDate after);
 
     /**
      * Retrieves all users.
