@@ -40,11 +40,11 @@
 				{
 					"name": "update user first name",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{{$randomFirstName}}",
+							"raw": "{\r\n    \"firstName\": \"{{$randomFirstName}}\",\r\n    \"lastName\": \"{{$randomLastName}}\",\r\n    \"birthdate\": \"1992-01-22\",\r\n    \"email\": \"{{$randomEmail}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -52,7 +52,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/v1/users/1/set-first-name",
+							"raw": "localhost:8080/v1/users/1",
 							"host": [
 								"localhost"
 							],
@@ -60,8 +60,7 @@
 							"path": [
 								"v1",
 								"users",
-								"1",
-								"set-first-name"
+								"1"
 							]
 						}
 					},
@@ -81,6 +80,26 @@
 							"path": [
 								"v1",
 								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all simple users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/users/simple",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"users",
+								"simple"
 							]
 						}
 					},
@@ -107,12 +126,12 @@
 					"response": []
 				},
 				{
-					"name": "get users by age",
+					"name": "get users by time",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/users/filter-by-age?ageGtThan=21",
+							"raw": "localhost:8080/v1/users/older/2001-12-11",
 							"host": [
 								"localhost"
 							],
@@ -120,13 +139,8 @@
 							"path": [
 								"v1",
 								"users",
-								"filter-by-age"
-							],
-							"query": [
-								{
-									"key": "ageGtThan",
-									"value": "21"
-								}
+								"older",
+								"2001-12-11"
 							]
 						}
 					},
@@ -138,7 +152,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/users/filter-by-email?email=gac",
+							"raw": "localhost:8080/v1/users/email?email=ck",
 							"host": [
 								"localhost"
 							],
@@ -146,12 +160,12 @@
 							"path": [
 								"v1",
 								"users",
-								"filter-by-email"
+								"email"
 							],
 							"query": [
 								{
 									"key": "email",
-									"value": "gac"
+									"value": "ck"
 								}
 							]
 						}
@@ -190,7 +204,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userId\": 1,\r\n    \"startTime\": \"2021-12-01 12:12\",\r\n    \"endTime\": \"2021-12-01 12:22\",\r\n    \"activityType\": \"WALKING\",\r\n    \"distance\": 132.123,\r\n    \"averageSpeed\": 2.4\r\n}",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"startTime\": \"2024-05-26T10:00:00\",\r\n    \"endTime\": \"2024-05-26T11:00:00\",\r\n    \"activityType\": \"WALKING\",\r\n    \"distance\": 132.123,\r\n    \"averageSpeed\": 2.4\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -214,11 +228,11 @@
 				{
 					"name": "update distance",
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "12.5",
+							"raw": "{\r\n    \"userId\": 1,\r\n    \"startTime\": \"2024-05-26T10:00:00\",\r\n    \"endTime\": \"2024-05-26T11:00:00\",\r\n    \"activityType\": \"WALKING\",\r\n    \"distance\": 1444.123,\r\n    \"averageSpeed\": 2.4\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -226,7 +240,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/v1/trainings/1/set-distance",
+							"raw": "localhost:8080/v1/trainings/1",
 							"host": [
 								"localhost"
 							],
@@ -234,8 +248,7 @@
 							"path": [
 								"v1",
 								"trainings",
-								"1",
-								"set-distance"
+								"1"
 							]
 						}
 					},
@@ -266,20 +279,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/trainings?userId=1",
+							"raw": "localhost:8080/v1/trainings/1",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"v1",
-								"trainings"
-							],
-							"query": [
-								{
-									"key": "userId",
-									"value": "1"
-								}
+								"trainings",
+								"1"
 							]
 						}
 					},
@@ -291,18 +299,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/trainings?activity=WALKING",
+							"raw": "localhost:8080/v1/trainings/activityType?activityType=WALKING",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"v1",
-								"trainings"
+								"trainings",
+								"activityType"
 							],
 							"query": [
 								{
-									"key": "activity",
+									"key": "activityType",
 									"value": "WALKING"
 								}
 							]
@@ -316,20 +325,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/v1/trainings?endedAfter=2021-11-01 12:22",
+							"raw": "localhost:8080/v1/trainings/finished/2024-05-18",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"v1",
-								"trainings"
-							],
-							"query": [
-								{
-									"key": "endedAfter",
-									"value": "2021-11-01 12:22"
-								}
+								"trainings",
+								"finished",
+								"2024-05-18"
 							]
 						}
 					},
